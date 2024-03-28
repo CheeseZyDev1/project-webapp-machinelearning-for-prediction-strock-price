@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>แอพพลิเคชันทำนายราคาหุ้น</title>
+    <!-- เรียกใช้งาน Bootstrap สำหรับการออกแบบที่รวดเร็วและตอบสนอง -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+</head>
+<body>
+<div class="container mt-5">
+    <h2 class="text-center">แอพพลิเคชันทำนายราคาหุ้น</h2>
+    <div class="form-group">
+        <label for="stockSelector">เลือกหุ้น:</label>
+        <select class="form-control" id="stockSelector">
+            <!-- ตัวเลือกหุ้นจะถูกเพิ่มที่นี่โดย JavaScript -->
+        </select>
+    </div>
+    <button class="btn btn-primary" onclick="fetchData
+
+()">ดูการทำนาย</button>
+
+</div>
+<div class="container mt-3">
+    <canvas id="stockChart"></canvas>
+</div>
+<script>
+// เตรียมตัวแปรสำหรับข้อมูลหุ้นและกราฟ
+let stockData = [];
+let stockLabels = [];
+
+function fetchData() {
+    const selectedStock = document.getElementById('stockSelector').value;
+    // ส่งคำขอไปยังเซิร์ฟเวอร์ Flask เพื่อรับข้อมูลหุ้น
+    fetch(`/get_stock_data/${selectedStock}`)
+        .then(response => response.json())
+        .then(data => {
+            // อัพเดทข้อมูลหุ้นและป้ายชื่อสำหรับกราฟ
+            stockData = [data.current_price, data.predicted_price];
+            stockLabels = ['ราคาปัจจุบัน', 'ราคาที่ทำนาย'];
+            // วาดกราฟ
+            drawChart();
+        })
+        .catch(error => console.error('Error fetching data:', error));
+}
+
+// วาดกราฟข้อมูลหุ้น
+function drawChart() {
+    const ctx = document.getElementById('stockChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: stockLabels,
+            datasets: [{
+                label: 'ราคาหุ้น (บาท)',
+                data: stockData,
+                backgroundColor: ['rgba(0, 123, 255, 0.5)', 'rgba(255, 193, 7, 0.5)'],
+                borderColor: ['rgba(0, 123, 255, 1)', 'rgba(255, 193, 7, 1)'],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    });
+}
+
+// โหลดรายการหุ้นเมื่อเว็บเพจโหลดเสร็จ
+document.addEventListener('DOMContentLoaded', function() {
+    const stockSelector = document.getElementById('stockSelector');
+    // รายการหุ้นที่มีให้เลือก
+    const stocks = ['AOT.BK', 'XPG.BK', 'PTTEP.BK', 'KTB.BK', 'KBANK.BK'];
+    // เพิ่มตัวเลือกหุ
+้นลงใน dropdown menu
+stocks.forEach(stock => {
+const option = document.createElement('option');
+option.value = stock;
+option.innerText = stock;
+stockSelector.appendChild(option);
+});
+});
+
+// แนบ event listener กับการ submit ของ form
+document.getElementById('stockForm').addEventListener('submit', function(event) {
+event.preventDefault(); // ป้องกันการ submit form แบบปกติ
+fetchData(); // เรียกใช้ฟังก์ชัน fetchData เมื่อมีการ submit form
+});
+</script>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+```
