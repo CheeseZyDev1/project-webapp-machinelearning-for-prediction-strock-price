@@ -24,7 +24,7 @@ stocks_data = {
 }
 
 def prepare_data_for_prediction(ticker):
-    data = yf.download(ticker, period="10m", interval="1m")
+    data = yf.download(ticker, period="1d", interval="1m")
     return data['Close'].iloc[-1]  # Use the last close price
 
 def update_and_predict():
