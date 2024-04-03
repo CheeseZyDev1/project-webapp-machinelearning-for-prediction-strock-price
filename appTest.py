@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s:%(mess
 scheduler = APScheduler()
 scheduler.init_app(app)
 
-model_path = r'C:\Users\plam\Desktop\project ml\modelForML.h5'
+model_path = r'C:\responlative des\project-webapp-machinelearning-for-prediction-strock-price\modelForML.h5'
 model = load_model(model_path)
 
 stocks_data = {
